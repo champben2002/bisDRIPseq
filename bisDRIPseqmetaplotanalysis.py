@@ -1,16 +1,37 @@
-import os
+#Purpose: to generate metaplot bisDRIP-seq scores for each position relative to a set of features. These scores can then be plotted to visualize the location of bisDRIP-seq scores relative to that set of features.
 
-#Run allproximalscorestosinglentfeatures(featurefile,inputfolder,outputfolder,name, direction,disfromfeature) to get a metaplot of read bisDRIP-seq scores relative to a group of features in featurefile. The first column of the feature file must be the chromosome expressed as "chrX" where X is 1,2,3,...,X. The second column must be the location of the feature. Inputfolder must contain bisDRIPseq score files.The metaplot will calculate the bisDRIPseq score at each position relative to features. The distance is the limit to how far away from the feature that the metaplot will be calculated. Each feature cannot be closer than 2X distance from another feature. Output will be put into a tab-delimmited file in 'outputfolder + name + final.txt'. Chromosome will be in column 1, position relative to feature in 2 and bisDRIP-seq score in column 3 to final column. BisDRIP-seq scores are put into seperate columns for each inputfile.
-#1 proximalscorestart()
-#1A combinefeatureandreadfiles()
-#1B saveproximalreads()
-#1Bi quicklistthin()
-#1C scoreregions()
-#2 proximalscorecont()
-#2A combinefeatureandreadfiles()
-#2B saveproximalreads()
-#2Bi quicklistthin()
-#2C addscoreregions()
+#To get bisDRIP-seq scores, use the program allproximalscorestosinglentfeatures() as described below:
+
+#Output of allproximalscorestosinglentfeatures(): The output is a multip-column tab-delimited file. In the first column are the positions from -disfromfeature to +disfromfeature, with zero indicating the location of the feature(s). In each subsequent column is the sum of the bisDRIP-seq scores at that position across all features for a given bisDRIP-seq sample.
+
+#Input of allproximalscorestosinglentfeatures(featurefile,inputfolder,outputfolder,name, direction,disfromfeature):
+
+#featurefile - a tab-delimited file that contains the location of each feature. The first row must be a header. Each following row must contain a feature and each feature must be on a seperate row. The first column of each feature row must contain the chromosome of the feature using the notation chrA where A is the number or letter of the chromosome. The second column of each feature row must contain the genomic position of the feature.
+
+#inputfolder - a directory containing a set of bisDRIP-seqs read score files. Each of these files should be for a different bisDRIP-seq sample. The contents of the file should contain bisDRIP-seq reads with their associated bisDRIP-seq scores. Each row of the files should contain information regarding a single read. The first column of each row must contain the chromosome of the read using the notation chrA where A is the number or letter of the chromosome. The second column of each row should contain the start position of each read. The third column in each row should contain the end position of each read. The final column of each row should contain the bisDRIP-seq score. 
+
+#outputfolder - directory where output should be written
+
+#name - the output will be written to outputfolder/ + name + final.txt
+
+#direction - if "negative", then the metaplot will be flipped around so that nucleotides upstream of the feature will be viewed as +X bp from the feature. This is valuable for genes which can be orientated in either direction.
+
+#disfromfeature - This determines how far from the feature the metaplot will extend from features. Note that disfromfeature must be smaller than the minimum distance between any two features
+
+#Outline of functions:
+#allproximalscorestosinglentfeatures(featurefile,inputfolder,outputfolder,name, direction,disfromfeature)
+	#1 proximalscorestart()
+		#1A combinefeatureandreadfiles()
+		#1B saveproximalreads()
+			#1Bi quicklistthin()
+		#1C scoreregions()
+	#2 proximalscorecont()
+		#2A combinefeatureandreadfiles()
+		#2B saveproximalreads()
+			#2Bi quicklistthin()
+		#2C addscoreregions()
+
+import os
 
 def combinefeatureandreadfiles(featurefile,readfile, tempfile):
 #1A and 2A
